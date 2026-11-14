@@ -6,265 +6,368 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>Agen Home Hub</title>
 <style>
-:root{
-  --font:"Segoe UI Variable","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
-  --txt:#fff; --dim:rgba(255,255,255,.66);
-  --blue:#0a84ff;
-}
+:root{--accent:#0a84ff;--blur:34px;--is:1;--txt:#fff;--dim:rgba(255,255,255,.68);
+  --font:"Segoe UI Variable","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+body.light{--txt:#111;--dim:rgba(0,0,0,.55)}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;overflow:hidden}
-body{font-family:var(--font);color:var(--txt);background:#000;user-select:none;-webkit-user-select:none}
-svg{display:block}
+html,body{width:100%;height:100%;overflow:hidden;background:#000}
+body{font-family:var(--font);color:var(--txt);user-select:none;-webkit-user-select:none}
+input,textarea,select{user-select:text;-webkit-user-select:text;color:var(--txt)}
+svg{display:block;flex:none}
 
-/* ---------- Hintergrund ---------- */
-#wall{position:fixed;inset:0;z-index:-1;transition:background .8s}
-.wp0{background:radial-gradient(120% 80% at 75% 0%,#f0b68a 0%,transparent 60%),radial-gradient(90% 70% at 0% 100%,#c97b55 0%,transparent 70%),linear-gradient(#b5764f,#6e4130)}
-.wp1{background:radial-gradient(110% 70% at 80% 0%,#4f8bff 0%,transparent 55%),radial-gradient(100% 80% at 10% 100%,#1b2262 0%,transparent 70%),linear-gradient(#1c2352,#070916)}
-.wp2{background:radial-gradient(100% 70% at 20% 0%,#ff9d74 0%,transparent 55%),radial-gradient(90% 80% at 100% 100%,#b24d86 0%,transparent 60%),linear-gradient(#2b1a33,#120a16)}
-.wp3{background:radial-gradient(100% 70% at 50% 0%,#f4f6fb 0%,transparent 60%),linear-gradient(#cfd8e8,#8e9bb6)}
+/* ---------- Bühne (skaliert sich auf jede Größe) ---------- */
+#stage{position:fixed;left:50%;top:50%;overflow:hidden;transform-origin:50% 50%}
+#wall{position:absolute;inset:0;background-size:cover;background-position:center;transition:background .6s}
+.wp0{background:radial-gradient(120% 80% at 75% 0%,#f0b68a,transparent 60%),radial-gradient(90% 70% at 0% 100%,#c97b55,transparent 70%),linear-gradient(#b5764f,#6e4130)}
+.wp1{background:radial-gradient(110% 70% at 80% 0%,#4f8bff,transparent 55%),radial-gradient(100% 80% at 10% 100%,#1b2262,transparent 70%),linear-gradient(#1c2352,#070916)}
+.wp2{background:radial-gradient(100% 70% at 20% 0%,#ff9d74,transparent 55%),radial-gradient(90% 80% at 100% 100%,#b24d86,transparent 60%),linear-gradient(#2b1a33,#120a16)}
+.wp3{background:radial-gradient(100% 70% at 50% 0%,#f4f6fb,transparent 60%),linear-gradient(#cfd8e8,#8e9bb6)}
 
 /* ---------- Liquid Glass ---------- */
-.glass{position:relative;overflow:hidden;border-radius:var(--r,26px);
+.glass{position:relative;overflow:hidden;border-radius:var(--r,28px);
   background:linear-gradient(160deg,rgba(255,255,255,.30),rgba(255,255,255,.07));
-  -webkit-backdrop-filter:blur(34px) saturate(185%);backdrop-filter:blur(34px) saturate(185%);
+  -webkit-backdrop-filter:blur(var(--blur)) saturate(180%);backdrop-filter:blur(var(--blur)) saturate(180%);
   box-shadow:0 14px 40px rgba(0,0,0,.22),inset 0 0 0 1px rgba(255,255,255,.2),inset 0 1.5px 0 rgba(255,255,255,.55)}
 .glass::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
   background:linear-gradient(115deg,transparent 34%,rgba(255,255,255,.16) 47%,transparent 60%)}
-.glass.dark{background:linear-gradient(160deg,rgba(20,24,40,.55),rgba(20,24,40,.25))}
+body.light .glass{background:linear-gradient(160deg,rgba(255,255,255,.7),rgba(255,255,255,.4))}
+.dark{background:linear-gradient(160deg,rgba(18,22,38,.6),rgba(18,22,38,.3))!important}
 
-/* ---------- Schalter / Tasten ---------- */
-.pill{border:0;border-radius:999px;color:#fff;font:inherit;font-weight:600;font-size:16px;padding:14px 22px;cursor:pointer;
+/* ---------- Bedienelemente ---------- */
+.pill{border:0;border-radius:999px;color:#fff;font:inherit;font-weight:600;font-size:17px;padding:14px 24px;cursor:pointer;
   background:linear-gradient(160deg,rgba(255,255,255,.38),rgba(255,255,255,.10));
   -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 6px 16px rgba(0,0,0,.2);transition:transform .15s}
 .pill:active{transform:scale(.96)}
-.pill.blue{background:linear-gradient(160deg,#3d9dff,#0a84ff)}
-.switch{width:51px;height:31px;border-radius:999px;background:rgba(120,120,128,.55);position:relative;flex:none;transition:background .25s}
-.switch::after{content:"";position:absolute;top:2px;left:2px;width:27px;height:27px;border-radius:50%;background:#fff;box-shadow:0 2px 5px rgba(0,0,0,.3);transition:transform .25s}
+.pill.blue{background:linear-gradient(160deg,var(--accent),color-mix(in srgb,var(--accent) 70%,#000))}
+.ibtn{border:0;background:none;color:var(--txt);cursor:pointer;padding:6px;border-radius:50%}
+.ibtn:active{opacity:.5}
+.ibtn.big{background:rgba(255,255,255,.2);padding:14px;border-radius:50%}
+.switch{width:52px;height:32px;border-radius:999px;background:rgba(120,120,128,.55);position:relative;flex:none;transition:background .25s;cursor:pointer}
+.switch::after{content:"";position:absolute;top:2px;left:2px;width:28px;height:28px;border-radius:50%;background:#fff;box-shadow:0 2px 5px rgba(0,0,0,.3);transition:transform .25s}
 .switch.on{background:#34c759}.switch.on::after{transform:translateX(20px)}
+.chk{width:28px;height:28px;border-radius:50%;border:2px solid rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none}
+.chk.on{background:var(--accent);border-color:var(--accent)}
+.field{width:100%;padding:14px 16px;border-radius:16px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.14);font:inherit;font-size:17px;outline:none}
+body.light .field{background:rgba(0,0,0,.05);border-color:rgba(0,0,0,.12)}
+.field::placeholder{color:var(--dim)}
+.addrow{display:flex;gap:10px;margin-bottom:14px;align-items:stretch}
+.addrow .field{flex:1;min-width:0}
+.seg{display:flex;background:rgba(255,255,255,.14);border-radius:16px;padding:4px;gap:4px;margin-bottom:14px}
+.seg button{flex:1;border:0;background:transparent;color:var(--txt);padding:11px;border-radius:12px;font:inherit;font-weight:600;cursor:pointer}
+.seg button.on{background:rgba(255,255,255,.34)}
+.row{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:16px 18px;border-radius:20px;margin-bottom:10px;background:rgba(255,255,255,.12);font-size:17px}
+.row small{display:block;color:var(--dim);font-size:13px;margin-top:3px}
+.row input[type=range]{width:220px;accent-color:var(--accent)}
+.rcard{padding:16px 18px;margin-bottom:12px;--r:24px}
+.rrow{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.rcard input[type=range]{width:100%;margin-top:12px;accent-color:var(--accent)}
+.rowc{display:flex;align-items:center;gap:10px}
+.chev{width:46px;height:46px;border-radius:50%;border:0;background:rgba(255,255,255,.2);color:var(--txt);cursor:pointer;display:flex;align-items:center;justify-content:center}
+.chev:active{transform:scale(.92)}
+.tval{font-size:30px;font-weight:300;min-width:80px;text-align:center}
+.note{color:var(--dim);font-size:14px;margin:12px 4px;line-height:1.45}
+.sec{font-size:13px;color:var(--dim);text-transform:uppercase;letter-spacing:.6px;margin:20px 4px 8px}
+.bar{height:10px;border-radius:6px;background:rgba(255,255,255,.2);overflow:hidden;margin:12px 0 4px}
+.bar i{display:block;height:100%;background:var(--accent)}
+.sw{width:34px;height:34px;border-radius:50%;cursor:pointer;display:inline-block;border:2px solid rgba(255,255,255,.4)}
+.cgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.cbtn{height:72px;border:0;border-radius:22px;font:inherit;font-size:26px;color:#fff;background:rgba(255,255,255,.2);cursor:pointer}
+.cbtn.op{background:var(--accent)}
+.cbtn:active{opacity:.6}
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.wpthumb{aspect-ratio:1;border-radius:22px;cursor:pointer;border:3px solid transparent;background-size:cover}
+.wpthumb.sel{border-color:#fff}
+.art{margin:10px auto 20px;width:180px;height:180px;border-radius:44px;background:linear-gradient(160deg,#ff375f,#bf2b5a);display:flex;align-items:center;justify-content:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.4)}
+.ctrl{display:flex;justify-content:center;gap:26px;align-items:center}
+.chatbox{min-height:420px;display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.bubble{padding:12px 16px;border-radius:20px;max-width:78%;font-size:16px;line-height:1.4}
+.bubble.me{align-self:flex-end;background:linear-gradient(160deg,var(--accent),color-mix(in srgb,var(--accent) 70%,#000))}
+.bubble.ai{align-self:flex-start;background:rgba(255,255,255,.18)}
+.big{font-size:110px;font-weight:200;text-align:center;font-variant-numeric:tabular-nums;letter-spacing:-3px;margin:14px 0 4px}
 .hide{display:none!important}
 
 /* ---------- Einrichtung ---------- */
-#setup{position:fixed;inset:0;z-index:90;display:flex;align-items:center;justify-content:center;padding:24px}
-#setup .card{--r:34px;width:min(460px,100%);padding:36px 28px;display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center}
-#setup h1{font-size:28px;font-weight:700;letter-spacing:-.4px}
-#setup p{color:var(--dim);font-size:16px;line-height:1.45}
-.field{width:100%;padding:15px 18px;border-radius:16px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.14);color:#fff;font:inherit;font-size:17px;outline:none}
-.field::placeholder{color:rgba(255,255,255,.55)}
-.wp-row{display:flex;gap:12px}
-.wp-pick{width:60px;height:60px;border-radius:50%;cursor:pointer;border:3px solid transparent}
+#setup{position:absolute;inset:0;z-index:90;display:flex;align-items:center;justify-content:center;padding:30px}
+#setup .card{--r:36px;width:min(480px,100%);padding:40px 30px;display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center}
+#setup h1{font-size:30px;font-weight:700;letter-spacing:-.5px}
+#setup p{color:var(--dim);font-size:17px;line-height:1.45}
+.wp-row{display:flex;gap:14px}
+.wp-pick{width:62px;height:62px;border-radius:50%;cursor:pointer;border:3px solid transparent}
 .wp-pick.sel{border-color:#fff}
 .dots{display:flex;gap:7px}.dots i{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.3)}.dots i.on{background:#fff}
 
 /* ---------- Sperrbildschirm ---------- */
-#lock{position:fixed;inset:0;z-index:60;display:flex;flex-direction:column;align-items:center;padding-top:14vh;transition:transform .5s cubic-bezier(.2,.8,.2,1),opacity .4s}
+#lock{position:absolute;inset:0;z-index:60;display:flex;flex-direction:column;align-items:center;padding-top:12%;transition:transform .5s cubic-bezier(.2,.8,.2,1),opacity .4s}
 #lock.gone{transform:translateY(-100%);opacity:0;pointer-events:none}
-.lock-time{font-size:min(30vw,170px);font-weight:300;letter-spacing:-4px;line-height:.95;font-variant-numeric:tabular-nums;
-  text-shadow:0 2px 24px rgba(0,0,0,.18)}
-.lock-date{margin-top:8px;font-size:20px;font-weight:500;color:rgba(255,255,255,.9)}
-.lock-foot{position:absolute;bottom:42px;left:0;right:0;text-align:center;font-size:14px;color:rgba(255,255,255,.8)}
-.lock-foot span{display:inline-block;width:40px;height:5px;border-radius:5px;background:rgba(255,255,255,.7);margin-bottom:10px}
+.lock-time{font-size:190px;font-weight:300;letter-spacing:-6px;line-height:.95;font-variant-numeric:tabular-nums;text-shadow:0 2px 24px rgba(0,0,0,.2)}
+.lock-date{margin-top:10px;font-size:26px;font-weight:500;text-shadow:0 1px 10px rgba(0,0,0,.2)}
+.lock-foot{position:absolute;bottom:50px;left:0;right:0;text-align:center;font-size:16px;color:rgba(255,255,255,.85)}
+.lock-foot i{display:block;margin:0 auto 12px;width:46px;height:5px;border-radius:5px;background:rgba(255,255,255,.75)}
 
-/* ---------- Startbildschirm ---------- */
-#home{position:fixed;inset:0;padding:16px 22px 120px;display:flex;flex-direction:column;gap:18px;overflow-y:auto}
-.status{display:flex;justify-content:space-between;align-items:center;font-size:15px;font-weight:600;padding:2px 6px;font-variant-numeric:tabular-nums}
-.status .ico{display:flex;gap:8px;align-items:center}
-.widgets{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:minmax(0,1fr);gap:16px;width:100%;max-width:820px;margin:0 auto}
-.w-therm{--r:30px;grid-row:span 2;padding:18px;display:flex;flex-direction:column;justify-content:space-between;min-height:320px}
-.w-clock{--r:30px;padding:14px;display:flex;align-items:center;justify-content:center;min-height:150px}
-.w-clock .face{width:100%;max-width:150px}
-.w-int{--r:30px;padding:16px;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;min-height:150px}
-.label{font-size:15px;font-weight:600}
-.label small{display:block;font-size:13px;color:var(--dim);font-weight:500;margin-top:2px}
-.temp{font-size:110px;font-weight:200;letter-spacing:-5px;text-align:center;font-variant-numeric:tabular-nums;line-height:1}
-.temp-ctl{display:flex;justify-content:space-between;align-items:center}
-.chev{width:44px;height:44px;border-radius:50%;border:0;color:#fff;cursor:pointer;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center}
-.chev:active{transform:scale(.92)}
-.scenes{grid-column:1/3;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.tile{--r:28px;min-height:110px;padding:14px;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;transition:transform .15s}
+/* ---------- Startseite ---------- */
+#status{position:absolute;top:14px;left:44px;right:44px;height:32px;display:flex;justify-content:space-between;align-items:center;font-size:18px;font-weight:600;z-index:5;font-variant-numeric:tabular-nums}
+#status .ico{display:flex;gap:10px;align-items:center}
+#pages{position:absolute;left:0;right:0;top:56px;bottom:150px;display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
+#pages::-webkit-scrollbar{display:none}
+.page{flex:0 0 100%;width:100%;scroll-snap-align:start;padding:18px 44px;height:100%;overflow-y:auto;scrollbar-width:none}
+.wg{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:170px;gap:18px}
+.w{--r:32px;padding:20px;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;transition:transform .15s}
+.w:active{transform:scale(.98)}
+.w .lbl{font-size:17px;font-weight:600}
+.w .lbl small{display:block;font-size:14px;color:var(--dim);font-weight:500;margin-top:3px}
+.w-therm{grid-column:1/3;grid-row:1/3;cursor:default}
+.tbig{font-size:170px;font-weight:200;letter-spacing:-8px;line-height:1;text-align:center;font-variant-numeric:tabular-nums}
+.w-clock{grid-column:3/5;grid-row:1;flex-direction:row;align-items:center;gap:24px}
+.w-clock .face{width:130px;height:130px;flex:none}
+.dig{font-size:72px;font-weight:300;letter-spacing:-2px;font-variant-numeric:tabular-nums;line-height:1}
+.dtxt{font-size:18px;color:var(--dim);margin-top:8px}
+.w-wx{grid-column:3;grid-row:2}
+.w-int{grid-column:4;grid-row:2}
+.wxt{font-size:52px;font-weight:200;letter-spacing:-2px}
+.scenes{grid-column:1/5;grid-row:3;display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.tile{--r:28px;padding:18px;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;transition:transform .15s}
 .tile:active{transform:scale(.97)}
-.tile.on{background:linear-gradient(160deg,rgba(10,132,255,.95),rgba(10,100,230,.85))}
-.tile .ico-s{width:30px;height:30px}
-
-/* ---------- App-Raster ---------- */
-.apps{display:grid;grid-template-columns:repeat(4,1fr);gap:22px 10px;justify-items:center;width:100%;max-width:820px;margin:0 auto}
-.app{display:flex;flex-direction:column;align-items:center;gap:7px;cursor:pointer;width:80px}
-.app .ic{width:70px;height:70px;border-radius:18px;display:flex;align-items:center;justify-content:center;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.45),inset 0 -1px 0 rgba(0,0,0,.12),0 6px 16px rgba(0,0,0,.25);transition:transform .15s}
+.tile.on{background:linear-gradient(160deg,var(--accent),color-mix(in srgb,var(--accent) 70%,#000))}
+.apps{display:grid;grid-template-columns:repeat(var(--cols,6),1fr);gap:28px 14px;justify-items:center;padding-top:10px}
+.app{display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;width:116px}
+.app .ic{width:calc(96px*var(--is));height:calc(96px*var(--is));border-radius:calc(24px*var(--is));display:flex;align-items:center;justify-content:center;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.45),inset 0 -1px 0 rgba(0,0,0,.12),0 8px 18px rgba(0,0,0,.25);transition:transform .15s}
+.app .ic svg{width:calc(50px*var(--is));height:calc(50px*var(--is))}
 .app:active .ic{transform:scale(.9)}
-.app .ic svg{width:36px;height:36px}
-.app .nm{font-size:12.5px;font-weight:500;text-shadow:0 1px 4px rgba(0,0,0,.45);text-align:center;white-space:nowrap}
-
-.dock{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);display:flex;gap:18px;padding:12px 18px;border-radius:36px;--r:36px;z-index:20}
+.app .nm{font-size:15px;font-weight:500;text-shadow:0 1px 4px rgba(0,0,0,.5);text-align:center;white-space:nowrap}
+#dots{position:absolute;left:0;right:0;bottom:132px;display:flex;justify-content:center;gap:9px;z-index:5}
+#dots i{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.35)}
+#dots i.on{background:#fff}
+.dock{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);display:flex;gap:18px;padding:14px 20px;--r:40px;z-index:20}
 .dock .app{width:auto}
-.dock .app .ic{width:62px;height:62px;border-radius:17px}
+.dock .app .ic{width:calc(88px*var(--is));height:calc(88px*var(--is));border-radius:calc(22px*var(--is))}
 .dock .app .nm{display:none}
 
 /* ---------- Kontrollzentrum ---------- */
-#cc{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.2);opacity:0;pointer-events:none;transition:opacity .3s}
+#cc{position:absolute;inset:0;z-index:50;background:rgba(0,0,0,.2);opacity:0;pointer-events:none;transition:opacity .3s}
 #cc.open{opacity:1;pointer-events:auto}
-#cc .panel{--r:34px;position:absolute;top:12px;right:12px;width:min(390px,calc(100% - 24px));padding:16px;display:flex;flex-direction:column;gap:12px;
+#cc .panel{--r:36px;position:absolute;top:14px;right:14px;width:440px;padding:18px;display:flex;flex-direction:column;gap:14px;
   transform:translateY(-16px) scale(.97);transition:transform .35s cubic-bezier(.2,.8,.2,1)}
 #cc.open .panel{transform:none}
 .cc-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.cc-tile{--r:24px;padding:16px;display:flex;align-items:center;gap:10px;font-weight:600;font-size:15px;cursor:pointer}
-.cc-tile.on{background:linear-gradient(160deg,rgba(10,132,255,.95),rgba(10,100,230,.85))}
-.cc-tile svg{width:22px;height:22px}
-.cc-slider{--r:24px;padding:14px 16px;display:flex;flex-direction:column;gap:10px;font-size:14px;font-weight:600}
-.cc-slider input{width:100%;accent-color:#fff}
+.cc-tile{--r:26px;padding:18px;display:flex;align-items:center;gap:12px;font-weight:600;font-size:17px;cursor:pointer}
+.cc-tile.on{background:linear-gradient(160deg,var(--accent),color-mix(in srgb,var(--accent) 70%,#000))}
+.cc-sl{--r:26px;padding:16px 18px;display:flex;flex-direction:column;gap:8px;font-size:15px;font-weight:600}
+.cc-sl input{width:100%;accent-color:#fff}
+.cc-mini{--r:26px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:10px}
 
 /* ---------- App-Fenster ---------- */
-#sheet{position:fixed;inset:8px;z-index:40;display:flex;flex-direction:column;--r:36px;
-  transform:scale(.9);opacity:0;pointer-events:none;transition:transform .4s cubic-bezier(.2,.8,.2,1),opacity .3s}
+#sheet{position:absolute;inset:14px;z-index:40;display:flex;flex-direction:column;--r:40px;
+  transform:scale(.92);opacity:0;pointer-events:none;transition:transform .4s cubic-bezier(.2,.8,.2,1),opacity .3s}
 #sheet.open{transform:none;opacity:1;pointer-events:auto}
-.sheet-top{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.18);position:relative;z-index:1}
-.sheet-top h2{font-size:20px;font-weight:700}
-.x{width:36px;height:36px;border-radius:50%;border:0;color:#fff;font-size:17px;cursor:pointer;background:rgba(255,255,255,.2)}
-#sheet-body{flex:1;overflow-y:auto;padding:18px 20px 30px;position:relative;z-index:1}
-.row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:15px 16px;border-radius:18px;margin-bottom:10px;background:rgba(255,255,255,.12);font-size:16px}
-.row small{display:block;color:var(--dim);font-size:13px;margin-top:3px}
-.note{color:var(--dim);font-size:13px;margin-top:12px;line-height:1.4}
-.bubble{padding:12px 16px;border-radius:20px;max-width:80%;font-size:15px;line-height:1.4;margin-bottom:10px}
-.bubble.me{margin-left:auto;background:linear-gradient(160deg,#3d9dff,#0a84ff)}
-.bubble.ai{background:rgba(255,255,255,.16)}
-.big{font-size:min(20vw,110px);font-weight:200;text-align:center;font-variant-numeric:tabular-nums;margin:20px 0 4px}
-textarea.field{min-height:260px;resize:vertical;line-height:1.5}
+.sheet-top{display:flex;align-items:center;justify-content:space-between;padding:20px 26px;border-bottom:1px solid rgba(255,255,255,.18);position:relative;z-index:1}
+.sheet-top h2{font-size:26px;font-weight:700}
+.x{width:44px;height:44px;border-radius:50%;border:0;color:var(--txt);font-size:20px;cursor:pointer;background:rgba(255,255,255,.2)}
+#sheet-body{flex:1;overflow-y:auto;padding:22px 26px 36px;position:relative;z-index:1}
+
+/* ---------- Benachrichtigung ---------- */
+#toast{position:absolute;left:50%;top:-80px;transform:translateX(-50%);z-index:95;padding:14px 26px;border-radius:999px;font-weight:600;font-size:17px;transition:top .35s cubic-bezier(.2,.8,.2,1);white-space:nowrap}
+#toast.show{top:30px}
 </style>
 </head>
 <body>
-<div id="wall" class="wp0"></div>
+<div id="stage">
+  <div id="wall" class="wp0"></div>
 
-<!-- Einrichtung -->
-<div id="setup" class="hide"><div class="glass card" id="setup-card"></div></div>
+  <!-- Einrichtung -->
+  <div id="setup" class="hide"><div class="glass card" id="setup-card"></div></div>
 
-<!-- Sperrbildschirm -->
-<div id="lock" class="hide">
-  <div class="lock-time" id="lk-time">--:--</div>
-  <div class="lock-date" id="lk-date"></div>
-  <div class="lock-foot"><span></span><br>Nach oben wischen zum Öffnen</div>
-</div>
-
-<!-- Startbildschirm -->
-<div id="home" class="hide">
-  <div class="status">
-    <span id="sb-time"></span>
-    <span class="ico" id="sb-ico"></span>
+  <!-- Sperrbildschirm -->
+  <div id="lock" class="hide">
+    <div class="lock-time" id="lk-time">--:--</div>
+    <div class="lock-date" id="lk-date"></div>
+    <div class="lock-foot"><i></i>Nach oben wischen zum Öffnen</div>
   </div>
-  <div class="widgets">
-    <div class="glass w-therm">
-      <div class="label">Thermostat<small>Wohnzimmer</small></div>
-      <div class="temp" id="temp">21</div>
-      <div class="temp-ctl">
-        <button class="chev" onclick="setTemp(-1)" aria-label="kälter"></button>
-        <span class="label" style="font-weight:500;color:var(--dim)">Heizen</span>
-        <button class="chev" onclick="setTemp(1)" aria-label="wärmer"></button>
-      </div>
+
+  <!-- Startseite -->
+  <div id="status"><span id="sb-time"></span><span class="ico" id="sb-ico"></span></div>
+  <div id="pages"></div>
+  <div id="dots"></div>
+  <div id="dock" class="dock glass hide"></div>
+
+  <!-- Kontrollzentrum -->
+  <div id="cc" onclick="if(event.target===this)toggleCC(false)">
+    <div class="glass panel" id="cc-panel"></div>
+  </div>
+
+  <!-- App-Fenster -->
+  <div id="sheet" class="glass dark">
+    <div class="sheet-top">
+      <h2 id="sheet-title"></h2>
+      <button class="x" onclick="closeApp()" aria-label="schließen">✕</button>
     </div>
-    <div class="glass w-clock" id="w-clock" onclick="openApp('clock')"></div>
-    <div class="glass w-int" onclick="openApp('intercom')">
-      <div class="label">Gegensprechen<small>Überall im Haus</small></div>
-      <div id="int-ico" style="align-self:center"></div>
-    </div>
-    <div class="scenes" id="scenes"></div>
+    <div id="sheet-body"></div>
   </div>
-  <div class="apps" id="apps"></div>
-</div>
 
-<div id="dock" class="dock glass hide"></div>
-
-<!-- Kontrollzentrum -->
-<div id="cc" onclick="if(event.target===this)toggleCC(false)">
-  <div class="glass panel">
-    <div class="cc-grid">
-      <div class="glass cc-tile on" onclick="this.classList.toggle('on')" id="t-wifi"><span data-i="wifi"></span>WLAN</div>
-      <div class="glass cc-tile on" onclick="this.classList.toggle('on')" id="t-bt"><span data-i="bt"></span>Bluetooth</div>
-      <div class="glass cc-tile" onclick="this.classList.toggle('on')"><span data-i="moon"></span>Fokus</div>
-      <div class="glass cc-tile" onclick="this.classList.toggle('on')"><span data-i="plane"></span>Flugmodus</div>
-    </div>
-    <div class="glass cc-slider"><span>Helligkeit</span><input type="range" min="30" max="100" value="90" oninput="document.getElementById('home').style.opacity=this.value/100"></div>
-    <div class="glass cc-slider"><span>Lautstärke</span><input type="range" min="0" max="100" value="60"></div>
-    <button class="pill" style="width:100%" onclick="lockScreen()">Sperren</button>
-  </div>
-</div>
-
-<!-- App-Fenster -->
-<div id="sheet" class="glass dark">
-  <div class="sheet-top">
-    <h2 id="sheet-title"></h2>
-    <button class="x" onclick="closeApp()" aria-label="schließen">✕</button>
-  </div>
-  <div id="sheet-body"></div>
+  <div id="toast" class="glass"></div>
 </div>
 
 <script>
-/* ============ Zustand ============ */
-const KEY='agenHub2';
-const DEF={setup:false,name:'',wp:0,temp:21,
-  rooms:{'Wohnzimmer':true,'Küche':false,'Schlafzimmer':false},
-  scenes:{ankommen:false,tuer:true,licht:false},notes:''};
-let S=Object.assign({},DEF,JSON.parse(localStorage.getItem(KEY)||'{}'));
-const save=()=>localStorage.setItem(KEY,JSON.stringify(S));
+/* ============ Hilfsfunktionen ============ */
 const $=id=>document.getElementById(id);
+const pad=n=>String(n).padStart(2,'0');
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const today=()=>{const d=new Date();return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());};
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove('show'),2300);}
+function speak(t){if('speechSynthesis' in window){const u=new SpeechSynthesisUtterance(t);u.lang='de-DE';speechSynthesis.speak(u);}}
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
 
-/* ============ Icons (eigene SVG-Linien) ============ */
+/* ============ Zustand ============ */
+const KEY='agenHub4';
+const DEF={setup:false,name:'',wp:0,custom:null,accent:'#0a84ff',blur:34,is:1,h24:true,unit:'C',light:false,
+  agenUrl:'',vol:0.6,city:'Wildeshausen',heatMode:'Heizen',doorLocked:true,
+  cc:{wifi:true,bt:true,focus:false,plane:false},
+  rooms:[{n:'Wohnzimmer',on:true,b:80,t:21},{n:'Küche',on:false,b:60,t:20},{n:'Schlafzimmer',on:false,b:40,t:18}],
+  notes:[],todos:[],shop:[],events:[],alarms:[],contacts:[],steps:{},sleep:[],chat:[],btDevices:[],ilog:[]};
+const clone=o=>JSON.parse(JSON.stringify(o));
+function load(){try{return Object.assign(clone(DEF),JSON.parse(localStorage.getItem(KEY)||'{}'));}catch(e){return clone(DEF);}}
+let S=load();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){toast('Speicher voll – Bild evtl. zu groß');}}
+
+/* ============ Icons (eigene Linien-Icons) ============ */
 const P={
-  bulb:'<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1V17h5v-1c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/>',
-  therm:'<path d="M14 14.8V5a2 2 0 1 0-4 0v9.8a4 4 0 1 0 4 0z"/>',
-  cam:'<rect x="3" y="7" width="13" height="11" rx="2.5"/><path d="M16 10.5l5-3v9l-5-3"/>',
-  bt:'<path d="M7 7l10 10-5 5V2l5 5L7 17"/>',
-  note:'<rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 8h8M8 12h8M8 16h5"/>',
-  cal:'<rect x="3" y="5" width="18" height="16" rx="3.5"/><path d="M3 10h18M8 3v4M16 3v4"/>',
-  sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
-  gear:'<circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/>',
-  spark:'<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/>',
-  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
-  lock:'<rect x="5" y="11" width="14" height="10" rx="3"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
-  wave:'<path d="M4 10v4M8 7v10M12 4v16M16 7v10M20 10v4"/>',
-  chevU:'<path d="M6 15l6-6 6 6"/>',
-  chevD:'<path d="M6 9l6 6 6-6"/>',
-  wifi:'<path d="M2 9a15 15 0 0 1 20 0M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0"/><circle cx="12" cy="19.5" r="1"/>',
-  moon:'<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/>',
-  plane:'<path d="M3 13l18-7-7 18-2-7z"/>',
+clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+cloud:'<path d="M7 18h10a4 4 0 0 0 0-8 6 6 0 0 0-11.5 1.5A3.5 3.5 0 0 0 7 18z"/>',
+cal:'<rect x="3" y="5" width="18" height="16" rx="3.5"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+check:'<rect x="3" y="3" width="18" height="18" rx="5"/><path d="M8 12.5l3 3 5-6"/>',
+note:'<rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 8h8M8 12h8M8 16h5"/>',
+calc:'<rect x="5" y="3" width="14" height="18" rx="3"/><path d="M8 7.5h8M8 12h1M12 12h1M16 12h1M8 16h1M12 16h1M16 16h1"/>',
+photo:'<rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="9.5" r="1.8"/><path d="M4 18l5.5-5.5 4 4 2.5-2.5L20 18"/>',
+music:'<path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/>',
+bulb:'<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1V17h5v-1c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/>',
+therm:'<path d="M14 14.8V5a2 2 0 1 0-4 0v9.8a4 4 0 1 0 4 0z"/>',
+cam:'<rect x="3" y="7" width="13" height="11" rx="2.5"/><path d="M16 10.5l5-3v9l-5-3"/>',
+wave:'<path d="M4 10v4M8 7v10M12 4v16M16 7v10M20 10v4"/>',
+bt:'<path d="M7 7l10 10-5 5V2l5 5L7 17"/>',
+spark:'<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/>',
+heart:'<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>',
+folder:'<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/>',
+pin:'<path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/>',
+cart:'<path d="M3 4h2l2.4 11h10.2L20 7H7"/><circle cx="9" cy="19" r="1.4"/><circle cx="17" cy="19" r="1.4"/>',
+gear:'<circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/>',
+lock:'<rect x="5" y="11" width="14" height="10" rx="3"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
+minus:'<path d="M5 12h14"/>',
+plus:'<path d="M12 5v14M5 12h14"/>',
+trash:'<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/>',
+x:'<path d="M6 6l12 12M18 6L6 18"/>',
+prev:'<path d="M19 4l-10 8 10 8zM5 4h2v16H5z"/>',
+next:'<path d="M5 4l10 8-10 8zM17 4h2v16h-2z"/>',
+play:'<path d="M7 4l13 8-13 8z"/>',
+pause:'<path d="M7 4h4v16H7zM13 4h4v16h-4z"/>',
+wifi:'<path d="M2 9a15 15 0 0 1 20 0M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0"/><circle cx="12" cy="19.5" r="1" fill="#fff"/>',
+moon:'<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/>',
+plane:'<path d="M3 13l18-7-7 18-2-7z"/>',
+sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
 };
-const ic=(n,s=24)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${P[n]}</svg>`;
-document.querySelectorAll('[data-i]').forEach(el=>el.innerHTML=ic(el.dataset.i,22));
+const FILLED=['play','pause','prev','next'];
+const ic=(n,s=24)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="${FILLED.includes(n)?'#fff':'none'}" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${P[n]||''}</svg>`;
 
 /* ============ Apps ============ */
 const APPS=[
-  {id:'lights',name:'Lichter',icon:'bulb',c:['#ffd60a','#ff9f0a']},
-  {id:'therm',name:'Heizung',icon:'therm',c:['#ff8a5c','#ff3b30']},
-  {id:'cam',name:'Kamera',icon:'cam',c:['#8e8e93','#48484a']},
-  {id:'bt',name:'Geräte',icon:'bt',c:['#0a84ff','#0050c8']},
-  {id:'cal',name:'Kalender',icon:'cal',c:['#ff5e57','#d70015']},
-  {id:'weather',name:'Wetter',icon:'sun',c:['#64d2ff','#0a7fd8']},
-  {id:'notes',name:'Notizen',icon:'note',c:['#ffe066','#f5b800']},
-  {id:'set',name:'Einstellungen',icon:'gear',c:['#8e8e93','#5a5a60']},
+  {id:'clock',n:'Uhr',i:'clock',c:['#3a3a3c','#101012']},
+  {id:'weather',n:'Wetter',i:'cloud',c:['#64d2ff','#0a7fd8']},
+  {id:'calendar',n:'Kalender',i:'cal',c:['#ff5e57','#d70015']},
+  {id:'reminders',n:'Erinnerungen',i:'check',c:['#8e8e93','#48484a']},
+  {id:'notes',n:'Notizen',i:'note',c:['#ffe066','#f5b800']},
+  {id:'calc',n:'Rechner',i:'calc',c:['#3a3a3c','#1c1c1e']},
+  {id:'photos',n:'Fotos',i:'photo',c:['#ff9f0a','#ff375f']},
+  {id:'music',n:'Musik',i:'music',c:['#ff375f','#bf2b5a']},
+  {id:'lights',n:'Lichter',i:'bulb',c:['#ffd60a','#ff9f0a']},
+  {id:'heating',n:'Heizung',i:'therm',c:['#ff8a5c','#ff3b30']},
+  {id:'camera',n:'Kamera',i:'cam',c:['#8e8e93','#48484a']},
+  {id:'intercom',n:'Gegensprechen',i:'wave',c:['#30d158','#1f9d40']},
+  {id:'devices',n:'Geräte',i:'bt',c:['#0a84ff','#0050c8']},
+  {id:'agen',n:'Agen',i:'spark',c:['#bf7bff','#7d3cff']},
+  {id:'health',n:'Gesundheit',i:'heart',c:['#ff4d6d','#c9184a']},
+  {id:'files',n:'Dateien',i:'folder',c:['#64d2ff','#0a84ff']},
+  {id:'contacts',n:'Kontakte',i:'user',c:['#98989d','#636366']},
+  {id:'maps',n:'Karten',i:'pin',c:['#30d158','#0a84ff']},
+  {id:'shop',n:'Einkauf',i:'cart',c:['#ffcc00','#ff9500']},
+  {id:'settings',n:'Einstellungen',i:'gear',c:['#8e8e93','#5a5a60']},
 ];
-const DOCK=[{id:'agen',name:'Agen',icon:'spark',c:['#bf7bff','#7d3cff']},{id:'notes',name:'Notizen',icon:'note',c:['#ffe066','#f5b800']},{id:'cam',name:'Kamera',icon:'cam',c:['#8e8e93','#48484a']},{id:'lights',name:'Lichter',icon:'bulb',c:['#ffd60a','#ff9f0a']}];
-const tile=a=>`<div class="app" onclick="openApp('${a.id}')"><div class="ic" style="background:linear-gradient(160deg,${a.c[0]},${a.c[1]})">${ic(a.icon,36)}</div><div class="nm">${a.name}</div></div>`;
+const DOCK=['agen','notes','camera','lights','settings'];
+const APP=id=>APPS.find(a=>a.id===id);
+const SCENES=[
+  {k:'ankommen',n:'Ankommen',i:'lock'},
+  {k:'tuer',n:'Tür verriegeln',i:'lock'},
+  {k:'film',n:'Kino',i:'bulb'},
+  {k:'licht',n:'Alles aus',i:'bulb'}
+];
 const WPS=['wp0','wp1','wp2','wp3'];
-const WPNAMES=['Warm','Nacht','Abend','Hell'];
+const ACC=['#0a84ff','#bf5af2','#ff375f','#30d158','#ff9f0a'];
+const WX={
+  Wildeshausen:{t:14,c:'Bewölkt',d:[['Sa',11],['So',13],['Mo',16],['Di',12],['Mi',10]]},
+  Berlin:{t:12,c:'Leicht bewölkt',d:[['Sa',10],['So',12],['Mo',14],['Di',11],['Mi',9]]},
+  Hamburg:{t:11,c:'Regen',d:[['Sa',9],['So',10],['Mo',12],['Di',10],['Mi',8]]},
+};
+let CUR=null, NOTE=null, CALC={e:''}, CAM=null, FILES=[], LAST_ALARM='', TM={end:0,rem:0}, SW={run:false,acc:0,start:0};
+const MUS={list:[],i:0,a:new Audio()};
+MUS.a.volume=S.vol;
+MUS.a.onended=()=>mNext();
+MUS.a.onplay=MUS.a.onpause=()=>{ if(CUR==='music') refresh(); updateCC(); };
+
+/* ============ Skalierung ============ */
+function fit(){
+  const portrait=innerHeight>innerWidth;
+  const W=portrait?800:1280, H=portrait?1280:800;
+  const st=$('stage');
+  st.style.width=W+'px'; st.style.height=H+'px';
+  st.style.transform=`translate(-50%,-50%) scale(${Math.min(innerWidth/W,innerHeight/H)})`;
+  document.documentElement.style.setProperty('--cols',portrait?4:6);
+}
+addEventListener('resize',fit);
+addEventListener('orientationchange',fit);
+
+/* ============ Design anwenden ============ */
+function applyTheme(){
+  const r=document.documentElement.style;
+  r.setProperty('--accent',S.accent);
+  r.setProperty('--blur',S.blur+'px');
+  r.setProperty('--is',S.is);
+  document.body.classList.toggle('light',!!S.light);
+  $('stage').style.filter=`brightness(${(S.bright??100)/100})`;
+  applyWP();
+}
+function applyWP(){
+  const w=$('wall');
+  if(S.custom){w.className='';w.style.backgroundImage=`url(${S.custom})`;}
+  else{w.style.backgroundImage='';w.className=WPS[S.wp]||'wp0';}
+}
+function setPref(k,v,live){
+  S[k]=v; save(); applyTheme();
+  if(k==='h24'||k==='unit') renderHome();
+  if(!live) refresh();
+}
 
 /* ============ Einrichtung ============ */
 let step=0;
 function renderSetup(){
   const dots=`<div class="dots">${[0,1,2].map(i=>`<i class="${i===step?'on':''}"></i>`).join('')}</div>`;
   const c=$('setup-card');
-  if(step===0) c.innerHTML=`<div style="width:86px;height:86px;border-radius:24px;background:linear-gradient(160deg,#bf7bff,#7d3cff);display:flex;align-items:center;justify-content:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.5)">${ic('spark',46)}</div>
+  if(step===0) c.innerHTML=`<div style="width:96px;height:96px;border-radius:28px;background:linear-gradient(160deg,#bf7bff,#7d3cff);display:flex;align-items:center;justify-content:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.5)">${ic('spark',52)}</div>
     <h1>Willkommen bei Agen</h1><p>Dein Home Hub für Zuhause, Geräte und Assistent.</p>${dots}
     <button class="pill blue" onclick="step=1;renderSetup()">Weiter</button>`;
   if(step===1) c.innerHTML=`<h1>Wie heißt du?</h1><p>Damit der Hub dich begrüßt.</p>
-    <input class="field" id="sname" placeholder="Dein Name" value="${S.name}">${dots}
+    <input class="field" id="sname" placeholder="Dein Name">${dots}
     <button class="pill blue" onclick="S.name=$('sname').value.trim()||'Freund';step=2;renderSetup()">Weiter</button>`;
   if(step===2) c.innerHTML=`<h1>Hintergrund</h1><p>Später in den Einstellungen änderbar.</p>
-    <div class="wp-row">${WPS.map((w,i)=>`<div class="wp-pick ${w} ${i===S.wp?'sel':''}" onclick="S.wp=${i};$('wall').className='${w}';renderSetup()"></div>`).join('')}</div>
+    <div class="wp-row">${WPS.map((w,i)=>`<div class="wp-pick ${w} ${i===S.wp?'sel':''}" onclick="S.wp=${i};S.custom=null;applyTheme();renderSetup()"></div>`).join('')}</div>
     ${dots}<button class="pill blue" onclick="finishSetup()">Fertig</button>`;
 }
-function finishSetup(){S.setup=true;save();$('setup').classList.add('hide');lockScreen(true);}
+function finishSetup(){S.setup=true;save();$('setup').classList.add('hide');renderHome();lockScreen();}
 
-/* ============ Uhr ============ */
+/* ============ Uhr / Zeit ============ */
+function timeStr(d){return d.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit',hour12:!S.h24});}
+function fmtMs(ms){const s=Math.floor(ms/1000);return pad(Math.floor(s/60))+':'+pad(s%60);}
 function clockFace(){
-  let s='<svg viewBox="-50 -50 100 100" style="width:100%;height:100%">';
+  let s='<svg viewBox="-50 -50 100 100" class="face">';
   for(let i=0;i<12;i++) s+=`<line y1="-44" y2="${i%3?-40:-38}" transform="rotate(${i*30})" stroke="#fff" stroke-width="${i%3?1.2:2.6}" stroke-linecap="round"/>`;
   s+=`<line id="hh" y1="4" y2="-22" stroke="#fff" stroke-width="3.6" stroke-linecap="round"/>`;
   s+=`<line id="mh" y1="6" y2="-34" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>`;
@@ -272,160 +375,551 @@ function clockFace(){
   return s;
 }
 function tick(){
-  const d=new Date();
-  const t=d.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
+  const d=new Date(),h=d.getHours(),m=d.getMinutes(),s=d.getSeconds();
+  const t=timeStr(d);
   $('sb-time').textContent=t;
-  $('lk-time').textContent=t;
+  $('lk-time').textContent=d.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
   $('lk-date').textContent=d.toLocaleDateString('de-DE',{weekday:'long',day:'numeric',month:'long'});
-  const h=d.getHours()%12,m=d.getMinutes(),s=d.getSeconds();
-  const hh=$('hh'),mh=$('mh'),sh=$('sh');
-  if(hh){hh.setAttribute('transform',`rotate(${h*30+m*0.5})`);mh.setAttribute('transform',`rotate(${m*6+s*0.1})`);sh.setAttribute('transform',`rotate(${s*6})`);}
+  const hh=$('hh');
+  if(hh){
+    hh.setAttribute('transform',`rotate(${(h%12)*30+m*0.5})`);
+    $('mh').setAttribute('transform',`rotate(${m*6+s*0.1})`);
+    $('sh').setAttribute('transform',`rotate(${s*6})`);
+  }
+  if($('dig')) $('dig').textContent=t;
+  if($('dtxt')) $('dtxt').textContent=d.toLocaleDateString('de-DE',{weekday:'long',day:'numeric',month:'long'});
+  // Wecker
+  const key=pad(h)+':'+pad(m);
+  if(s===0 && LAST_ALARM!==key){
+    LAST_ALARM=key;
+    S.alarms.forEach(a=>{ if(a.on && a.t===key){ toast('Wecker: '+(a.l||a.t)); speak(a.l||'Wecker'); } });
+  }
+  // Timer
+  if(TM.end){
+    const left=TM.end-Date.now();
+    if(left<=0){ TM.end=0; TM.rem=0; toast('Timer abgelaufen'); speak('Timer abgelaufen'); if(CUR==='clock') refresh(); }
+    if($('tm-disp')) $('tm-disp').textContent=fmtMs(Math.max(0,left));
+  }
+  // Stoppuhr
+  if($('sw-disp')) $('sw-disp').textContent=fmtMs(SW.acc+(SW.run?Date.now()-SW.start:0));
 }
 setInterval(tick,1000);
 
-/* ============ Startbildschirm ============ */
+/* ============ Startseite ============ */
+function dispT(c){return S.unit==='F'?Math.round(c*9/5+32):c;}
+function tUnit(){return S.unit==='F'?'°F':'°C';}
 function renderHome(){
-  $('wall').className=WPS[S.wp];
-  $('w-clock').innerHTML=clockFace();
-  $('int-ico').innerHTML=ic('wave',42);
-  $('temp').textContent=S.temp;
+  const r=S.rooms[0];
+  const d=new Date();
+  const wx=WX[S.city]||WX.Wildeshausen;
+  const pages=[`
+    <div class="page"><div class="wg">
+      <div class="glass w w-therm">
+        <div class="lbl">Heizung<small>${esc(r.n)} · ${esc(S.heatMode)}</small></div>
+        <div class="tbig" id="tbig">${dispT(r.t)}°</div>
+        <div class="rowc" style="display:flex;justify-content:space-between;align-items:center">
+          <button class="chev" onclick="adjMain(-1)">${ic('minus',24)}</button>
+          <span class="lbl" style="color:var(--dim)">${tUnit()}</span>
+          <button class="chev" onclick="adjMain(1)">${ic('plus',24)}</button>
+        </div>
+      </div>
+      <div class="glass w w-clock" onclick="openApp('clock')">
+        <div class="face-wrap" style="width:130px;height:130px">${clockFace()}</div>
+        <div><div class="dig" id="dig">${timeStr(d)}</div><div class="dtxt" id="dtxt">${d.toLocaleDateString('de-DE',{weekday:'long',day:'numeric',month:'long'})}</div></div>
+      </div>
+      <div class="glass w w-wx" onclick="openApp('weather')">
+        <div class="lbl">Wetter<small>${esc(S.city)}</small></div>
+        <div><div class="wxt">${dispT(wx.t)}°</div><small style="color:var(--dim)">${wx.c}</small></div>
+      </div>
+      <div class="glass w w-int" onclick="openApp('intercom')">
+        <div class="lbl">Gegensprechen<small>Im ganzen Haus</small></div>
+        <div style="align-self:center">${ic('wave',54)}</div>
+      </div>
+      <div class="scenes" id="scenes"></div>
+    </div></div>`];
+  // Apps-Seiten (je 24 Apps)
+  for(let i=0;i<APPS.length;i+=24){
+    pages.push(`<div class="page"><div class="apps">${APPS.slice(i,i+24).map(appTile).join('')}</div></div>`);
+  }
+  $('pages').innerHTML=pages.join('');
+  $('dots').innerHTML=pages.map((_,i)=>`<i class="${i===0?'on':''}"></i>`).join('');
+  $('dock').innerHTML=`<div style="display:flex;gap:18px">${DOCK.map(id=>appTile(APP(id))).join('')}</div>`;
+  $('dock').classList.remove('hide');
+  $('sb-ico').innerHTML=`<svg width="20" height="13" viewBox="0 0 20 13" fill="#fff"><rect x="0" y="9" width="3.4" height="4" rx="1"/><rect x="5" y="6" width="3.4" height="7" rx="1"/><rect x="10" y="3" width="3.4" height="10" rx="1"/><rect x="15" y="0" width="3.4" height="13" rx="1"/></svg><span style="font-size:15px">5G</span>`;
   renderScenes();
-  $('apps').innerHTML=APPS.map(tile).join('');
-  $('dock').innerHTML=DOCK.map(tile).join('');
-  $('sb-ico').innerHTML=`<svg width="18" height="12" viewBox="0 0 18 12" fill="#fff"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2" width="3" height="10" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><span style="font-size:13px;margin-left:6px">5G</span>`;
+  $('pages').onscroll=()=>{
+    const idx=Math.round($('pages').scrollLeft/$('pages').clientWidth);
+    [...$('dots').children].forEach((el,i)=>el.classList.toggle('on',i===idx));
+  };
   tick();
 }
+function appTile(a){
+  return `<div class="app" onclick="openApp('${a.id}')"><div class="ic" style="background:linear-gradient(160deg,${a.c[0]},${a.c[1]})">${ic(a.i,50)}</div><div class="nm">${a.n}</div></div>`;
+}
 function renderScenes(){
-  const defs=[
-    {k:'ankommen',n:'Ankommen',i:'lock'},
-    {k:'tuer',n:'Tür',i:'lock'},
-    {k:'licht',n:'Alles aus',i:'bulb'}
-  ];
-  $('scenes').innerHTML=defs.map(d=>`
-    <div class="glass tile ${S.scenes[d.k]?'on':''}" onclick="runScene('${d.k}')">
-      <div class="ico-s">${ic(d.i,30)}</div>
-      <div class="label">${d.n}<small>${S.scenes[d.k]?'Aktiv':'Szene'}</small></div>
-    </div>`).join('');
+  const el=$('scenes'); if(!el) return;
+  el.innerHTML=SCENES.map(s=>{
+    const on=s.k==='tuer'?!S.doorLocked:false;
+    const sub=s.k==='tuer'?(S.doorLocked?'Verriegelt':'Offen'):'Szene';
+    return `<div class="glass tile ${on?'on':''}" onclick="runScene('${s.k}')">
+      ${ic(s.i,36)}<div class="lbl" style="font-size:18px;font-weight:600">${s.n}<small style="display:block;color:var(--dim);font-size:14px;font-weight:500">${sub}</small></div></div>`;
+  }).join('');
 }
 function runScene(k){
-  S.scenes[k]=!S.scenes[k];
-  if(k==='licht') Object.keys(S.rooms).forEach(r=>S.rooms[r]=false);
-  if(k==='ankommen') Object.keys(S.rooms).forEach(r=>S.rooms[r]=true);
-  save();renderScenes();
+  if(k==='ankommen'){S.rooms.forEach(r=>r.on=true);S.rooms[0].t=21;toast('Willkommen zu Hause');}
+  if(k==='tuer'){S.doorLocked=!S.doorLocked;toast(S.doorLocked?'Tür verriegelt':'Tür entriegelt');}
+  if(k==='film'){S.rooms[0].on=true;S.rooms[0].b=20;toast('Kino-Modus');}
+  if(k==='licht'){S.rooms.forEach(r=>r.on=false);toast('Alle Lichter aus');}
+  save();renderScenes();updateWidgets();refresh();
 }
-function setTemp(d){S.temp=Math.min(30,Math.max(10,S.temp+d));$('temp').textContent=S.temp;save();}
-
-/* ============ Sperre ============ */
-function lockScreen(first){
-  $('lock').classList.remove('hide','gone');
-  $('home').classList.add('hide');$('dock').classList.add('hide');
-  toggleCC(false);
-  if(first===true) return;
-}
-function unlock(){
-  $('lock').classList.add('gone');
-  setTimeout(()=>{$('lock').classList.add('hide');},500);
-  $('home').classList.remove('hide');$('dock').classList.remove('hide');
-  renderHome();
+function adjMain(d){tAdj(0,d);}
+function tAdj(i,d){S.rooms[i].t=clamp(S.rooms[i].t+d,10,30);save();updateWidgets();refresh();}
+function updateWidgets(){
+  const t=$('tbig'); if(t) t.textContent=dispT(S.rooms[0].t)+'°';
 }
 
 /* ============ Kontrollzentrum ============ */
 function toggleCC(force){
   const el=$('cc');
-  el.classList.toggle('open',typeof force==='boolean'?force:!el.classList.contains('open'));
+  const open=typeof force==='boolean'?force:!el.classList.contains('open');
+  if(open) updateCC();
+  el.classList.toggle('open',open);
+}
+function updateCC(){
+  const c=S.cc;
+  const playing=MUS.list.length && MUS.a.src && !MUS.a.paused;
+  const mini=MUS.list.length?`<div class="glass cc-mini"><div><b>${esc(MUS.list[MUS.i]?.name||'Musik')}</b><small style="display:block;color:var(--dim)">${playing?'Spielt':'Pausiert'}</small></div>
+    <div style="display:flex;gap:6px"><button class="ibtn" onclick="mPrev()">${ic('prev',26)}</button><button class="ibtn" onclick="mToggle()">${ic(playing?'pause':'play',28)}</button><button class="ibtn" onclick="mNext()">${ic('next',26)}</button></div></div>`:'';
+  $('cc-panel').innerHTML=`
+    <div class="cc-grid">
+      <div class="glass cc-tile ${c.wifi?'on':''}" onclick="ccTog('wifi')">${ic('wifi',24)}WLAN</div>
+      <div class="glass cc-tile ${c.bt?'on':''}" onclick="ccTog('bt')">${ic('bt',24)}Bluetooth</div>
+      <div class="glass cc-tile ${c.focus?'on':''}" onclick="ccTog('focus')">${ic('moon',24)}Fokus</div>
+      <div class="glass cc-tile ${c.plane?'on':''}" onclick="ccTog('plane')">${ic('plane',24)}Flugmodus</div>
+    </div>
+    <div class="glass cc-sl"><span>Helligkeit</span><input type="range" min="30" max="100" value="${S.bright??100}" oninput="setBright(this.value)"></div>
+    <div class="glass cc-sl"><span>Lautstärke</span><input type="range" min="0" max="100" value="${Math.round(S.vol*100)}" oninput="setVol(this.value)"></div>
+    ${mini}
+    <button class="pill blue" style="width:100%" onclick="lockScreen()">Sperren</button>`;
+}
+function ccTog(k){S.cc[k]=!S.cc[k];save();updateCC();}
+function setBright(v){S.bright=+v;save();$('stage').style.filter=`brightness(${v/100})`;}
+function setVol(v){S.vol=v/100;MUS.a.volume=S.vol;save();}
+
+/* ============ Sperren / Entsperren ============ */
+function lockScreen(first){
+  toggleCC(false);
+  closeApp();
+  $('lock').classList.remove('hide','gone');
+  $('pages').classList.add('hide');$('dots').classList.add('hide');$('dock').classList.add('hide');
+  $('status').classList.add('hide');
+}
+function unlock(){
+  if(!$('lock').classList.contains('hide')&&!$('lock').classList.contains('gone')){
+    $('lock').classList.add('gone');
+    setTimeout(()=>$('lock').classList.add('hide'),500);
+    ['pages','dots','dock','status'].forEach(id=>$(id).classList.remove('hide'));
+    renderHome();
+  }
 }
 
 /* ============ Wischgesten ============ */
 let g=null;
-document.addEventListener('pointerdown',e=>{g={x:e.clientX,y:e.clientY,t:Date.now()};});
+document.addEventListener('pointerdown',e=>{g={x:e.clientX,y:e.clientY};});
 document.addEventListener('pointerup',e=>{
   if(!g) return;
   const dx=e.clientX-g.x, dy=e.clientY-g.y;
-  const sheetOpen=$('sheet').classList.contains('open');
-  const locked=!$('lock').classList.contains('hide') && !$('lock').classList.contains('gone');
-  if(locked && dy<-60 && Math.abs(dy)>Math.abs(dx)) unlock();
-  else if(!locked && g.y<40 && dy>60 && g.x>innerWidth*0.4) toggleCC(true);
-  else if(!locked && sheetOpen && dy>0 && g.y>innerHeight-120 && dy>80) closeApp();
+  const locked=!$('lock').classList.contains('hide')&&!$('lock').classList.contains('gone');
+  if(locked){ if(dy<-60 && Math.abs(dy)>Math.abs(dx)) unlock(); }
+  else if(g.y<60 && dy>60 && g.x>innerWidth*0.4) toggleCC(true);
   g=null;
 });
-$('lock').addEventListener('click',()=>{ if(!S.setup) return; unlock(); });
+$('lock').addEventListener('click',()=>{ if(S.setup) unlock(); });
+addEventListener('keydown',e=>{
+  if(e.key==='Escape'){closeApp();toggleCC(false);}
+  if(CUR==='calc' && $('sheet').classList.contains('open')) calcKey(e.key);
+});
 
 /* ============ App-Fenster ============ */
 function openApp(id){
-  const titles={agen:'Agen',intercom:'Gegensprechen',lights:'Lichter',therm:'Heizung',cam:'Kamera',bt:'Geräte',cal:'Kalender',weather:'Wetter',notes:'Notizen',set:'Einstellungen',clock:'Uhr'};
-  $('sheet-title').textContent=titles[id]||'';
+  if(!S.setup) return;
+  CUR=id;
+  const a=APP(id);
+  const titles={agen:'Agen',intercom:'Gegensprechen'};
+  $('sheet-title').textContent=titles[id]||(a?a.n:'');
   $('sheet-body').innerHTML=body(id);
   $('sheet').classList.add('open');
+  toggleCC(false);
 }
-function closeApp(){$('sheet').classList.remove('open');}
+function closeApp(){
+  $('sheet').classList.remove('open');
+  camStop();
+  CUR=null;
+}
+function refresh(){
+  updateWidgets();
+  if($('sheet').classList.contains('open') && CUR) $('sheet-body').innerHTML=body(CUR);
+}
 
-function toggleRoom(r){S.rooms[r]=!S.rooms[r];save();openApp('lights');renderScenes();}
-function body(id){
-  switch(id){
-    case 'lights': return Object.keys(S.rooms).map(r=>`
-      <div class="row"><div>${r}<small>${S.rooms[r]?'An':'Aus'}</small></div>
-      <div class="switch ${S.rooms[r]?'on':''}" onclick="toggleRoom('${r}')"></div></div>`).join('');
-    case 'therm': return `<div class="big">${S.temp}°</div>
-      <div style="display:flex;justify-content:center;gap:14px;margin-top:20px">
-        <button class="pill" onclick="setTemp(-1);openApp('therm')">−</button>
-        <button class="pill" onclick="setTemp(1);openApp('therm')">+</button></div>
-      <p class="note" style="text-align:center">Ziel für das Wohnzimmer. Echte Regelung braucht ein Thermostat mit Anbindung.</p>`;
-    case 'intercom': return `<div class="row">Alle Räume<small>Nachricht an das ganze Haus</small></div>
-      <div class="row">Wohnzimmer<small>Sprechen</small></div>
-      <p class="note">Nur Demo. Echte Sprachübertragung braucht eine eigene Anbindung.</p>`;
-    case 'cam': return `<div class="glass" style="--r:26px;height:260px;display:flex;align-items:center;justify-content:center">${ic('cam',60)}</div>
-      <button class="pill blue" style="width:100%;margin-top:16px" onclick="startCam()">Kamera starten</button>`;
-    case 'bt': return `<p class="note" style="margin:0 0 12px">Geräte in der Nähe suchen. Funktioniert in Chrome auf Android.</p>
-      <button class="pill blue" style="width:100%" onclick="scanBT()">Suchen</button><div id="bt-list" style="margin-top:14px"></div>`;
-    case 'agen': return `<div id="chat">
-        <div class="bubble ai">Hi ${S.name||'Freund'}, was kann ich tun?</div></div>
-      <div style="display:flex;gap:10px;margin-top:10px"><input class="field" id="ain" placeholder="Frag etwas" onkeydown="if(event.key==='Enter')askAgent()"><button class="pill blue" onclick="askAgent()">↑</button></div>`;
-    case 'cal': return `<div class="row">Frühstück<small>09:00 · Heute</small></div>
-      <div class="row">Projekt Review<small>14:00 · Heute</small></div>
-      <p class="note">Beispieltermine.</p>`;
-    case 'weather': return `<div class="big">14°</div><p style="text-align:center;color:var(--dim)">Bewölkt</p>
-      <p class="note" style="text-align:center">Beispieldaten. Für echtes Wetter eine Wetter-API anbinden.</p>`;
-    case 'notes': return `<textarea class="field" oninput="S.notes=this.value;save()" placeholder="Schreibe etwas…">${S.notes}</textarea>`;
-    case 'set': return `<div class="row">Name<small>${S.name||'–'}</small></div>
-      <div class="row" style="cursor:pointer" onclick="step=1;$('setup').classList.remove('hide');renderSetup()">Einrichtung ändern</div>
-      <div class="row">Hintergrund<div style="display:flex;gap:8px">${WPS.map((w,i)=>`<div class="wp-pick ${w} ${i===S.wp?'sel':''}" style="width:30px;height:30px;border-width:2px" onclick="S.wp=${i};save();renderHome()"></div>`).join('')}</div></div>
-      <div class="row">Version<small>Agen Home Hub 1.0</small></div>`;
-    case 'clock': return `<div class="big" id="bigclk"></div><p class="note" style="text-align:center">${new Date().toLocaleDateString('de-DE',{weekday:'long',day:'numeric',month:'long'})}</p>`;
+const V={};
+function body(id){ const f=V[id]; return f?f():'<p class="note">Kommt bald.</p>'; }
+
+/* ---- Allgemeine Liste (Erinnerungen, Einkauf) ---- */
+function listUI(key,ph){
+  return `<div class="addrow"><input class="field" id="in-${key}" placeholder="${ph}" onkeydown="if(event.key==='Enter')addItem('${key}')"><button class="pill blue" onclick="addItem('${key}')">${ic('plus',22)}</button></div>`+
+    (S[key].map((x,i)=>`<div class="row"><div class="chk ${x.done?'on':''}" onclick="toggleItem('${key}',${i})">${x.done?ic('check',18):''}</div>
+      <span style="flex:1;${x.done?'text-decoration:line-through;opacity:.55':''}">${esc(x.t)}</span>
+      <button class="ibtn" onclick="delItem('${key}',${i})">${ic('trash',22)}</button></div>`).join('')||'<p class="note">Noch leer.</p>');
+}
+function addItem(key){const el=$('in-'+key);const t=el.value.trim();if(!t)return;S[key].push({t,done:false});save();refresh();}
+function toggleItem(key,i){S[key][i].done=!S[key][i].done;save();refresh();}
+function delItem(key,i){S[key].splice(i,1);save();refresh();}
+V.reminders=()=>listUI('todos','Erinnerung hinzufügen');
+V.shop=()=>listUI('shop','Artikel hinzufügen');
+
+/* ---- Uhr ---- */
+let CLOCK_TAB='time';
+V.clock=()=>{
+  const tabs=[['time','Uhrzeit'],['alarm','Wecker'],['timer','Timer'],['sw','Stoppuhr']];
+  const bar=`<div class="seg">${tabs.map(([k,n])=>`<button class="${CLOCK_TAB===k?'on':''}" onclick="CLOCK_TAB='${k}';refresh()">${n}</button>`).join('')}</div>`;
+  if(CLOCK_TAB==='time'){
+    const d=new Date();
+    return bar+`<div class="big" id="dig">${timeStr(d)}</div><p class="note" style="text-align:center">${d.toLocaleDateString('de-DE',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</p>
+      <div class="sec">Weltzeit</div>
+      <div class="row">Tokio<span>${new Date().toLocaleTimeString('de-DE',{timeZone:'Asia/Tokyo',hour:'2-digit',minute:'2-digit'})}</span></div>
+      <div class="row">New York<span>${new Date().toLocaleTimeString('de-DE',{timeZone:'America/New_York',hour:'2-digit',minute:'2-digit'})}</span></div>
+      <div class="row">London<span>${new Date().toLocaleTimeString('de-DE',{timeZone:'Europe/London',hour:'2-digit',minute:'2-digit'})}</span></div>`;
   }
-  return '';
+  if(CLOCK_TAB==='alarm'){
+    return bar+`<div class="addrow"><input type="time" class="field" id="al-t" value="07:00"><input class="field" id="al-l" placeholder="Bezeichnung"><button class="pill blue" onclick="addAlarm()">${ic('plus',22)}</button></div>`+
+      (S.alarms.map((a,i)=>`<div class="row"><div><b>${a.t}</b><small>${esc(a.l||'Wecker')}</small></div><div style="display:flex;gap:12px;align-items:center"><div class="switch ${a.on?'on':''}" onclick="togAlarm(${i})"></div><button class="ibtn" onclick="delAlarm(${i})">${ic('trash',22)}</button></div></div>`).join('')||'<p class="note">Keine Wecker.</p>');
+  }
+  if(CLOCK_TAB==='timer'){
+    const left=TM.end?Math.max(0,TM.end-Date.now()):TM.rem;
+    return bar+`<div class="big" id="tm-disp">${fmtMs(left)}</div>
+      <div class="seg" style="margin-top:20px"><button onclick="tmSet(1)">1 Min</button><button onclick="tmSet(5)">5 Min</button><button onclick="tmSet(15)">15 Min</button></div>
+      <div class="ctrl"><button class="pill blue" onclick="tmStart()">${TM.end?'Pause':'Start'}</button><button class="pill" onclick="tmReset()">Zurücksetzen</button></div>`;
+  }
+  if(CLOCK_TAB==='sw'){
+    return bar+`<div class="big" id="sw-disp">${fmtMs(SW.acc+(SW.run?Date.now()-SW.start:0))}</div>
+      <div class="ctrl"><button class="pill blue" onclick="swToggle()">${SW.run?'Stopp':'Start'}</button><button class="pill" onclick="swReset()">Zurücksetzen</button></div>`;
+  }
+  return bar;
+};
+function addAlarm(){const t=$('al-t').value,l=$('al-l').value.trim();if(!t)return;S.alarms.push({t,l,on:true});save();refresh();}
+function togAlarm(i){S.alarms[i].on=!S.alarms[i].on;save();refresh();}
+function delAlarm(i){S.alarms.splice(i,1);save();refresh();}
+let TMDUR=5*60*1000;
+function tmSet(min){TMDUR=min*60*1000;TM.rem=TMDUR;TM.end=0;refresh();}
+function tmStart(){
+  if(TM.end){TM.rem=Math.max(0,TM.end-Date.now());TM.end=0;}
+  else{ if(!TM.rem) TM.rem=TMDUR; TM.end=Date.now()+TM.rem; }
+  refresh();
+}
+function tmReset(){TM={end:0,rem:TMDUR};refresh();}
+function swToggle(){
+  if(SW.run){SW.acc+=Date.now()-SW.start;SW.run=false;}
+  else{SW.start=Date.now();SW.run=true;}
+  refresh();
+}
+function swReset(){SW={run:false,acc:0,start:0};refresh();}
+
+/* ---- Wetter ---- */
+V.weather=()=>{
+  const w=WX[S.city]||WX.Wildeshausen;
+  return `<div class="addrow"><select class="field" onchange="setPref('city',this.value)">${Object.keys(WX).map(c=>`<option ${c===S.city?'selected':''}>${c}</option>`).join('')}</select></div>
+    <div class="big">${dispT(w.t)}°</div>
+    <p style="text-align:center;color:var(--dim);font-size:18px">${w.c}</p>
+    <div class="glass rcard" style="margin-top:18px;display:flex;justify-content:space-between;text-align:center">
+      ${w.d.map(([t,v])=>`<div><div style="color:var(--dim);font-size:15px">${t}</div><div style="font-size:24px;margin:8px 0">${ic('sun',30)}</div><b>${dispT(v)}°</b></div>`).join('')}
+    </div>
+    <p class="note">Beispieldaten. Für echtes Wetter eine Wetter-API anbinden.</p>`;
+};
+
+/* ---- Kalender ---- */
+V.calendar=()=>{
+  S.events.sort((a,b)=>(a.d+a.t)>(b.d+b.t)?1:-1);
+  return `<div class="addrow" style="flex-wrap:wrap"><input type="date" class="field" id="ev-d" value="${today()}" style="flex:1.2"><input type="time" class="field" id="ev-t" value="09:00" style="flex:.8"><input class="field" id="ev-n" placeholder="Titel" style="flex:2"><button class="pill blue" onclick="addEvent()">${ic('plus',22)}</button></div>`+
+    (S.events.map((e,i)=>`<div class="row"><div><b>${esc(e.n)}</b><small>${e.d.split('-').reverse().join('.')} · ${e.t}</small></div><button class="ibtn" onclick="delEvent(${i})">${ic('trash',22)}</button></div>`).join('')||'<p class="note">Keine Termine.</p>');
+};
+function addEvent(){
+  const d=$('ev-d').value,t=$('ev-t').value,n=$('ev-n').value.trim();
+  if(!d||!n)return toast('Datum und Titel angeben');
+  S.events.push({d,t,n});save();refresh();
+}
+function delEvent(i){S.events.splice(i,1);save();refresh();}
+
+/* ---- Notizen ---- */
+V.notes=()=>{
+  if(NOTE!==null){
+    const n=S.notes.find(x=>x.id===NOTE);
+    if(n) return `<div class="row" style="cursor:pointer" onclick="NOTE=null;refresh()">← Alle Notizen</div>
+      <textarea class="field" style="min-height:400px;line-height:1.5" oninput="setNote(this.value)">${esc(n.b)}</textarea>
+      <div style="display:flex;justify-content:flex-end;margin-top:12px"><button class="pill" onclick="delNote()">Löschen</button></div>`;
+    NOTE=null;
+  }
+  return `<button class="pill blue" style="width:100%;margin-bottom:14px" onclick="newNote()">Neue Notiz</button>`+
+    (S.notes.map(n=>`<div class="row" style="cursor:pointer" onclick="NOTE=${n.id};refresh()"><div><b>${esc((n.b.split('\n')[0]||'Neue Notiz').slice(0,40))}</b><small>${esc(n.b.slice(0,80).replace(/\n/g,' '))||'Leer'}</small></div></div>`).join('')||'<p class="note">Keine Notizen.</p>');
+};
+function newNote(){const id=Date.now();S.notes.unshift({id,b:''});NOTE=id;save();refresh();}
+function setNote(v){const n=S.notes.find(x=>x.id===NOTE);if(n){n.b=v;save();}}
+function delNote(){S.notes=S.notes.filter(x=>x.id!==NOTE);NOTE=null;save();refresh();}
+
+/* ---- Rechner ---- */
+V.calc=()=>`<div class="glass" style="--r:26px;padding:22px;text-align:right;font-size:72px;font-weight:300;min-height:130px;word-break:break-all;margin-bottom:16px" id="cdisp">${esc(CALC.e||'0')}</div>
+  <div class="cgrid">${['C','(',')','÷','7','8','9','×','4','5','6','−','1','2','3','+','%','0','.','='].map(k=>`<button class="cbtn ${'÷×−+='.includes(k)?'op':''}" onclick="calcKey('${k}')">${k}</button>`).join('')}</div>`;
+function calcKey(k){
+  const map={'/':'÷','*':'×','-':'−','Enter':'=','=':'=','Backspace':'⌫','Escape':'C'};
+  if(/^[0-9.()+%]$/.test(k)) k=k; else if(map[k]) k=map[k]; else return;
+  if(k==='C'){CALC.e='';}
+  else if(k==='⌫'){CALC.e=CALC.e.slice(0,-1);}
+  else if(k==='='){
+    try{
+      const x=CALC.e.replace(/×/g,'*').replace(/÷/g,'/').replace(/−/g,'-').replace(/%/g,'/100');
+      if(!/^[\d+\-*/().\s/]+$/.test(x)) throw 0;
+      const r=Function('return ('+x+')')();
+      CALC.e=String(Number.isFinite(r)?+r.toFixed(10):'Fehler');
+    }catch(e){CALC.e='Fehler';}
+  }
+  else{ if(CALC.e==='Fehler') CALC.e=''; CALC.e+=k; }
+  if(CUR==='calc') refresh();
 }
 
-/* ============ Kamera / Bluetooth / Agen ============ */
-async function startCam(){
-  try{
-    const s=await navigator.mediaDevices.getUserMedia({video:true});
-    $('sheet-body').innerHTML=`<video autoplay playsinline style="width:100%;border-radius:26px"></video>`;
-    $('sheet-body').querySelector('video').srcObject=s;
-  }catch(e){alert('Kamera nicht verfügbar: '+e.message);}
+/* ---- Fotos / Hintergrund ---- */
+V.photos=()=>`<div class="pgrid">${WPS.map((w,i)=>`<div class="wpthumb ${w} ${!S.custom&&S.wp===i?'sel':''}" onclick="setWP(${i})"></div>`).join('')}${S.custom?`<div class="wpthumb sel" style="background-image:url(${S.custom})" onclick="setWP(-1)"></div>`:''}</div>
+  <label class="pill blue" style="display:block;text-align:center;margin-top:18px;cursor:pointer">Eigenes Foto als Hintergrund<input type="file" accept="image/*" hidden onchange="pickPhoto(this)"></label>
+  <p class="note">Das Foto wird verkleinert und im Browser gespeichert.</p>`;
+function setWP(i){if(i<0)return;S.custom=null;S.wp=i;save();applyTheme();refresh();}
+function pickPhoto(input){
+  const f=input.files[0]; if(!f) return;
+  const img=new Image();
+  img.onload=()=>{
+    const sc=Math.min(1,1280/img.width);
+    const c=document.createElement('canvas');
+    c.width=img.width*sc;c.height=img.height*sc;
+    c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+    S.custom=c.toDataURL('image/jpeg',0.82);
+    save();applyTheme();refresh();toast('Hintergrund gesetzt');
+  };
+  img.src=URL.createObjectURL(f);
+  input.value='';
 }
+
+/* ---- Musik ---- */
+V.music=()=>{
+  const cur=MUS.list[MUS.i];
+  return `<div class="glass" style="--r:32px;padding:30px;text-align:center">
+    <div class="art">${ic('music',90)}</div>
+    <h3 style="font-size:24px">${cur?esc(cur.name):'Keine Musik'}</h3>
+    <p class="note">${MUS.a.src&&!MUS.a.paused?'Spielt':'Pausiert'}</p>
+    <div class="ctrl"><button class="ibtn" onclick="mPrev()">${ic('prev',40)}</button><button class="ibtn big" onclick="mToggle()">${ic(MUS.a.paused||!MUS.a.src?'play':'pause',44)}</button><button class="ibtn" onclick="mNext()">${ic('next',40)}</button></div>
+  </div>
+  <label class="pill blue" style="display:block;text-align:center;margin-top:16px;cursor:pointer">Musik hinzufügen<input type="file" accept="audio/*" multiple hidden onchange="addMusic(this)"></label>
+  <div style="margin-top:16px">${MUS.list.map((t,i)=>`<div class="row" style="cursor:pointer" onclick="mPlay(${i})"><span>${esc(t.name)}</span>${i===MUS.i?'<small>läuft</small>':''}</div>`).join('')}</div>`;
+};
+function addMusic(input){for(const f of input.files) MUS.list.push({name:f.name,url:URL.createObjectURL(f)});input.value='';refresh();}
+function mPlay(i){MUS.i=i;MUS.a.src=MUS.list[i].url;MUS.a.volume=S.vol;MUS.a.play().catch(()=>toast('Abspielen nicht möglich'));refresh();}
+function mToggle(){
+  if(!MUS.list.length) return toast('Erst Musik hinzufügen');
+  if(!MUS.a.src) return mPlay(MUS.i);
+  MUS.a.paused?MUS.a.play():MUS.a.pause();
+}
+function mNext(){if(MUS.list.length)mPlay((MUS.i+1)%MUS.list.length);}
+function mPrev(){if(MUS.list.length)mPlay((MUS.i-1+MUS.list.length)%MUS.list.length);}
+
+/* ---- Lichter ---- */
+V.lights=()=>S.rooms.map((r,i)=>`<div class="glass rcard">
+  <div class="rrow"><div><b>${esc(r.n)}</b><small style="display:block;color:var(--dim);font-size:14px">${r.on?'An · '+r.b+' %':'Aus'}</small></div>
+  <div style="display:flex;gap:12px;align-items:center"><div class="switch ${r.on?'on':''}" onclick="rToggle(${i})"></div>
+  ${S.rooms.length>1?`<button class="ibtn" onclick="rDel(${i})">${ic('trash',22)}</button>`:''}</div></div>
+  ${r.on?`<input type="range" min="5" max="100" value="${r.b}" oninput="rBright(${i},this.value)">`:''}
+</div>`).join('')+
+`<div class="addrow" style="margin-top:8px"><input class="field" id="rn" placeholder="Neuer Raum oder Lampe"><button class="pill blue" onclick="rAdd()">${ic('plus',22)}</button></div>`;
+function rToggle(i){S.rooms[i].on=!S.rooms[i].on;save();refresh();}
+function rBright(i,v){S.rooms[i].b=+v;save();}
+function rAdd(){const n=$('rn').value.trim();if(!n)return;S.rooms.push({n,on:false,b:80,t:21});save();refresh();}
+function rDel(i){S.rooms.splice(i,1);save();refresh();}
+
+/* ---- Heizung ---- */
+V.heating=()=>`<div class="seg">${['Heizen','Kühlen','Aus'].map(m=>`<button class="${S.heatMode===m?'on':''}" onclick="S.heatMode='${m}';save();refresh()">${m}</button>`).join('')}</div>`+
+  S.rooms.map((r,i)=>`<div class="glass rcard"><div class="rrow"><div><b>${esc(r.n)}</b><small style="display:block;color:var(--dim);font-size:14px">Ziel ${dispT(r.t)}${tUnit()}</small></div>
+    <div class="rowc"><button class="chev" onclick="tAdj(${i},-1)">${ic('minus',22)}</button><span class="tval">${dispT(r.t)}°</span><button class="chev" onclick="tAdj(${i},1)">${ic('plus',22)}</button></div></div></div>`).join('')+
+  `<p class="note">Anzeige und Speicherung im Browser. Echte Steuerung braucht ein Thermostat mit Schnittstelle (z. B. Matter oder Home Assistant).</p>`;
+
+/* ---- Gegensprechen ---- */
+V.intercom=()=>`<div class="glass rcard" style="--r:28px;padding:22px">
+  <b style="font-size:20px">Ansage</b>
+  <p class="note" style="margin:6px 0 14px">Text eingeben, das Tablet spricht ihn aus.</p>
+  <select class="field" id="ic-r" style="margin-bottom:12px"><option value="">Alle Räume</option>${S.rooms.map((r,i)=>`<option value="${i}">${esc(r.n)}</option>`).join('')}</select>
+  <div class="addrow" style="margin:0"><input class="field" id="ic-t" placeholder="Nachricht" onkeydown="if(event.key==='Enter')announce()"><button class="pill blue" onclick="announce()">Ansagen</button></div>
+  </div>
+  <div class="seg"><button onclick="ringDoor()">Klingel-Ton</button></div>
+  <div class="sec">Verlauf</div>
+  ${S.ilog.map(x=>`<div class="row"><span>${esc(x.txt)}</span><small>${x.t}</small></div>`).join('')||'<p class="note">Noch keine Ansagen.</p>'}
+  <p class="note">Echte Gegensprechanlagen brauchen eigene Lautsprecher und Mikrofone in den Räumen.</p>`;
+function announce(){
+  const t=$('ic-t').value.trim(); if(!t) return;
+  const ri=$('ic-r').value;
+  const room=ri===''?'Alle':S.rooms[+ri].n;
+  speak((ri===''?'':S.rooms[+ri].n+': ')+t);
+  S.ilog.unshift({txt:room+': '+t,t:timeStr(new Date())});
+  S.ilog=S.ilog.slice(0,20);save();toast('Angesagt');refresh();
+}
+function ringDoor(){speak('Es klingelt an der Tür');toast('Klingel');}
+
+/* ---- Kamera ---- */
+V.camera=()=>`<div class="glass" style="--r:28px;height:380px;display:flex;align-items:center;justify-content:center;overflow:hidden;margin-bottom:16px">
+  <video id="cv" autoplay playsinline muted style="width:100%;height:100%;object-fit:cover;display:none"></video>
+  <span id="cph">${ic('cam',80)}</span></div>
+  <div style="display:flex;gap:12px"><button class="pill blue" style="flex:1" onclick="camStart()">Starten</button><button class="pill" style="flex:1" onclick="camShot()">Foto</button><button class="pill" onclick="camStop()">Stopp</button></div>`;
+async function camStart(){
+  try{
+    CAM=await navigator.mediaDevices.getUserMedia({video:true});
+    const v=$('cv'); v.srcObject=CAM; v.style.display='block'; $('cph').style.display='none';
+  }catch(e){toast('Kamera nicht verfügbar');}
+}
+function camShot(){
+  const v=$('cv'); if(!CAM||!v) return toast('Erst Kamera starten');
+  const c=document.createElement('canvas');c.width=v.videoWidth||1280;c.height=v.videoHeight||720;
+  c.getContext('2d').drawImage(v,0,0,c.width,c.height);
+  const a=document.createElement('a');a.href=c.toDataURL('image/jpeg',0.92);a.download='foto-'+Date.now()+'.jpg';a.click();
+  toast('Foto gespeichert');
+}
+function camStop(){
+  if(CAM){CAM.getTracks().forEach(t=>t.stop());CAM=null;}
+  const v=$('cv'); if(v){v.style.display='none';}
+  const p=$('cph'); if(p) p.style.display='';
+}
+
+/* ---- Geräte (Bluetooth) ---- */
+V.devices=()=>`<button class="pill blue" style="width:100%" onclick="scanBT()">Geräte in der Nähe suchen</button>
+  <p class="note">Bluetooth LE über Chrome auf Android. Handys koppelst du in den Android-Einstellungen, nicht hier.</p>
+  ${S.btDevices.map((d,i)=>`<div class="row"><div><b>${esc(d.n)}</b><small>${d.connected?'Verbunden':'Gespeichert'}${d.batt!=null?' · Akku '+d.batt+' %':''}</small></div><button class="pill" onclick="forgetBT(${i})">Entfernen</button></div>`).join('')}`;
 async function scanBT(){
-  const l=$('bt-list');
-  if(!navigator.bluetooth){l.innerHTML=`<div class="row">Nicht verfügbar<small>Bitte Chrome auf Android verwenden.</small></div>`;return;}
+  if(!navigator.bluetooth) return toast('Bluetooth nicht verfügbar (Chrome Android nötig)');
   try{
-    const d=await navigator.bluetooth.requestDevice({acceptAllDevices:true,optionalServices:['battery_service','device_information']});
-    l.innerHTML=`<div class="row">${d.name||'Unbekanntes Gerät'}<small>${d.id}</small></div>`;
-    d.addEventListener('gattserverdisconnected',()=>l.insertAdjacentHTML('beforeend',`<div class="row">Getrennt</div>`));
-    await d.gatt.connect();
-    l.insertAdjacentHTML('beforeend',`<div class="row">Verbunden<small>Bereit</small></div>`);
-  }catch(e){l.innerHTML=`<div class="row">Abgebrochen<small>${e.message}</small></div>`;}
+    const d=await navigator.bluetooth.requestDevice({acceptAllDevices:true,optionalServices:['battery_service']});
+    const entry={n:d.name||'Unbekanntes Gerät',id:d.id,connected:false,batt:null};
+    S.btDevices=S.btDevices.filter(x=>x.id!==d.id);S.btDevices.push(entry);
+    d.addEventListener('gattserverdisconnected',()=>{entry.connected=false;save();refresh();});
+    const server=await d.gatt.connect();
+    entry.connected=true;
+    try{const svc=await server.getPrimaryService('battery_service');const ch=await svc.getCharacteristic('battery_level');const val=await ch.readValue();entry.batt=val.getUint8(0);}catch(e){}
+    save();refresh();toast('Verbunden');
+  }catch(e){toast('Verbindung abgebrochen');}
 }
-function askAgent(){
-  const i=$('ain'),t=i.value.trim();if(!t)return;
-  const c=$('chat');
-  c.insertAdjacentHTML('beforeend',`<div class="bubble me">${t.replace(/[<>&]/g,m=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[m]))}</div>`);
+function forgetBT(i){S.btDevices.splice(i,1);save();refresh();}
+
+/* ---- Agen ---- */
+V.agen=()=>`<div class="chatbox">${S.chat.map(m=>`<div class="bubble ${m.r==='me'?'me':'ai'}">${esc(m.t)}</div>`).join('')||`<div class="bubble ai">Hi ${esc(S.name||'Freund')}, was kann ich tun?</div>`}</div>
+  <div class="addrow"><input class="field" id="ain" placeholder="Frag etwas oder sag: Licht aus" onkeydown="if(event.key==='Enter')askAgent()"><button class="pill blue" onclick="askAgent()">${ic('spark',22)}</button></div>
+  <p class="note">Steuert Lichter, Heizung und Uhrzeit. Für freie Fragen einen Endpunkt in den Einstellungen eintragen.</p>`;
+async function askAgent(){
+  const i=$('ain'); const q=i.value.trim(); if(!q) return;
   i.value='';
-  setTimeout(()=>c.insertAdjacentHTML('beforeend',`<div class="bubble ai">Demo: Hier wird später dein KI-Modell angebunden.</div>`),400);
+  S.chat.push({r:'me',t:q}); S.chat=S.chat.slice(-60); save(); refresh();
+  const a=await respond(q);
+  S.chat.push({r:'ai',t:a}); S.chat=S.chat.slice(-60); save(); refresh();
+  setTimeout(()=>{const c=$('ain');if(c)c.focus();},50);
 }
+async function respond(q){
+  const l=q.toLowerCase();
+  if(/licht.*(aus|off)|alles aus/.test(l)){S.rooms.forEach(r=>r.on=false);save();updateWidgets();return 'Alle Lichter sind aus.';}
+  if(/licht.*(an|ein|on)/.test(l)){S.rooms.forEach(r=>r.on=true);save();return 'Alle Lichter sind an.';}
+  const m=l.match(/(\d{1,2})\s*(grad|°)/);
+  if(m){const n=clamp(+m[1],10,30);S.rooms[0].t=n;save();updateWidgets();return `Ich stelle die Heizung im ${S.rooms[0].n} auf ${n} °C.`;}
+  if(/wie spät|uhrzeit|wie viel uhr/.test(l)) return 'Es ist '+new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})+' Uhr.';
+  if(/wetter/.test(l)){const w=WX[S.city]||WX.Wildeshausen;return `${S.city}: ${w.t} °C, ${w.c.toLowerCase()} (Beispieldaten).`;}
+  if(S.agenUrl){
+    try{
+      const r=await fetch(S.agenUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:q})});
+      const txt=await r.text();
+      try{const j=JSON.parse(txt);return j.reply||j.text||txt;}catch(e){return txt;}
+    }catch(e){return 'Der Endpunkt antwortet nicht: '+e.message;}
+  }
+  return 'Ich kann Lichter, Heizung und Uhrzeit steuern. Für freie Fragen trage in den Einstellungen einen Endpunkt ein.';
+}
+
+/* ---- Gesundheit ---- */
+V.health=()=>{
+  const t=today(), st=S.steps[t]||0;
+  return `<div class="glass rcard" style="padding:22px">
+    <b style="font-size:19px">Schritte heute</b>
+    <div class="big" style="font-size:96px">${st.toLocaleString('de-DE')}</div>
+    <div class="bar"><i style="width:${Math.min(100,st/100)}%"></i></div>
+    <p class="note">Ziel 10.000 Schritte</p>
+    <div class="addrow" style="margin:12px 0 0"><input class="field" type="number" id="stp" placeholder="Schritte hinzufügen"><button class="pill blue" onclick="addSteps()">${ic('plus',22)}</button></div>
+  </div>
+  <div class="glass rcard" style="padding:22px">
+    <b style="font-size:19px">Schlaf letzte Nacht</b>
+    <div class="addrow" style="margin:12px 0"><input class="field" type="number" step="0.5" id="slp" placeholder="Stunden"><button class="pill blue" onclick="addSleep()">Speichern</button></div>
+    ${S.sleep.slice(-7).reverse().map(x=>`<div class="row"><span>${x.d.split('-').reverse().join('.')}</span><span>${x.h} h</span></div>`).join('')}
+  </div>`;
+};
+function addSteps(){const v=+$('stp').value;if(!v)return;const t=today();S.steps[t]=(S.steps[t]||0)+v;save();refresh();}
+function addSleep(){const v=+$('slp').value;if(!v)return;S.sleep.push({d:today(),h:v});S.sleep=S.sleep.slice(-30);save();refresh();}
+
+/* ---- Kontakte / Karten / Dateien ---- */
+V.contacts=()=>`<div class="addrow"><input class="field" id="cn" placeholder="Name"><input class="field" id="cp" placeholder="Nummer"><button class="pill blue" onclick="addContact()">${ic('plus',22)}</button></div>`+
+  (S.contacts.map((c,i)=>`<div class="row"><div><b>${esc(c.n)}</b><small>${esc(c.p)}</small></div>
+    <div style="display:flex;gap:10px;align-items:center"><a class="pill" href="tel:${esc(c.p)}" style="text-decoration:none;color:var(--txt)">Anrufen</a><button class="ibtn" onclick="delContact(${i})">${ic('trash',22)}</button></div></div>`).join('')||'<p class="note">Noch keine Kontakte.</p>');
+function addContact(){const n=$('cn').value.trim(),p=$('cp').value.trim();if(!n)return;S.contacts.push({n,p});save();refresh();}
+function delContact(i){S.contacts.splice(i,1);save();refresh();}
+V.maps=()=>`<div class="addrow"><input class="field" id="mq" placeholder="Ort suchen" onkeydown="if(event.key==='Enter')findPlace()"><button class="pill blue" onclick="findPlace()">${ic('pin',22)}</button></div>
+  <p class="note">Öffnet die Suche in Google Maps in einem neuen Tab.</p>`;
+function findPlace(){const q=$('mq').value.trim();if(!q)return;window.open('https://www.google.com/maps/search/'+encodeURIComponent(q),'_blank');}
+
+V.files=()=>`<label class="pill blue" style="display:block;text-align:center;cursor:pointer">Datei hinzufügen<input type="file" multiple hidden onchange="addFiles(this)"></label>
+  <div style="margin-top:16px">${FILES.map(f=>`<div class="row"><div><b>${esc(f.name)}</b><small>${(f.size/1024).toFixed(0)} KB</small></div><a class="pill" href="${f.url}" download="${esc(f.name)}" style="text-decoration:none;color:var(--txt)">Öffnen</a></div>`).join('')||'<p class="note">Keine Dateien.</p>'}</div>
+  <p class="note">Dateien bleiben nur bis zum Schließen der Seite erhalten.</p>`;
+function addFiles(input){for(const f of input.files) FILES.push({name:f.name,size:f.size,url:URL.createObjectURL(f)});input.value='';refresh();}
+
+/* ---- Einstellungen ---- */
+V.settings=()=>`
+  <div class="sec">Profil</div>
+  <div class="row"><div>Name</div><input class="field" style="width:260px" value="${esc(S.name)}" onchange="S.name=this.value.trim()||S.name;save();refresh()"></div>
+  <div class="sec">Darstellung</div>
+  <div class="row"><div>Helles Design</div><div class="switch ${S.light?'on':''}" onclick="setPref('light',!S.light)"></div></div>
+  <div class="row"><div>Akzentfarbe</div><div style="display:flex;gap:10px">${ACC.map(c=>`<i class="sw" style="background:${c};${S.accent===c?'border-color:#fff':''}" onclick="setPref('accent','${c}')"></i>`).join('')}</div></div>
+  <div class="row"><div>Glas-Unschärfe<small>${S.blur} px</small></div><input type="range" min="0" max="60" value="${S.blur}" oninput="setPref('blur',+this.value,true)"></div>
+  <div class="row"><div>Symbolgröße<small>${Math.round(S.is*100)} %</small></div><input type="range" min="0.8" max="1.25" step="0.05" value="${S.is}" oninput="setPref('is',+this.value,true)"></div>
+  <div class="row"><div>Hintergrund<small>Im Fotos-App änderbar</small></div><div style="display:flex;gap:8px">${WPS.map((w,i)=>`<i class="wpthumb ${w}" style="width:34px;height:34px;border-width:2px;${!S.custom&&S.wp===i?'border-color:#fff':''}" onclick="setWP(${i})"></i>`).join('')}</div></div>
+  <div class="sec">Uhr & Einheiten</div>
+  <div class="row"><div>24-Stunden-Format</div><div class="switch ${S.h24?'on':''}" onclick="setPref('h24',!S.h24)"></div></div>
+  <div class="row"><div>Temperatur</div><div class="seg" style="margin:0;width:180px"><button class="${S.unit==='C'?'on':''}" onclick="setPref('unit','C')">°C</button><button class="${S.unit==='F'?'on':''}" onclick="setPref('unit','F')">°F</button></div></div>
+  <div class="sec">Geräte & Assistent</div>
+  <div class="row" style="flex-direction:column;align-items:stretch"><div>Endpunkt für freie Fragen<small>Optional, z. B. die URL deines Modells</small></div>
+    <input class="field" style="margin-top:10px" value="${esc(S.agenUrl)}" placeholder="https://..." onchange="setPref('agenUrl',this.value.trim(),true)"></div>
+  <div class="sec">Daten</div>
+  <div class="row" style="cursor:pointer" onclick="exportData()"><div>Sicherung exportieren</div></div>
+  <label class="row" style="cursor:pointer"><div>Sicherung importieren</div><input type="file" accept="application/json" hidden onchange="importData(this)"></label>
+  <div class="row" style="cursor:pointer" onclick="resetAll()"><div style="color:#ff453a">Alles zurücksetzen</div></div>
+  <div class="sec">Info</div>
+  <div class="row"><div>Version<small>Agen Home Hub 2.0</small></div></div>`;
+function exportData(){
+  const blob=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='agen-sicherung.json';a.click();
+}
+function importData(input){
+  const f=input.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>{try{S=Object.assign(clone(DEF),JSON.parse(r.result));save();applyTheme();renderHome();refresh();toast('Sicherung geladen');}catch(e){toast('Datei ungültig');}};
+  r.readAsText(f);
+}
+function resetAll(){if(confirm('Alle Daten löschen und neu einrichten?')){localStorage.removeItem(KEY);location.reload();}}
 
 /* ============ Start ============ */
-if(!S.setup){renderSetup();$('setup').classList.remove('hide');$('lock').classList.add('hide');}
-else{$('wall').className=WPS[S.wp];lockScreen(true);renderHome();}
+fit();
+applyTheme();
 tick();
+if(!S.setup){
+  renderSetup();
+  $('setup').classList.remove('hide');
+  $('lock').classList.add('hide');
+}else{
+  renderHome();
+  lockScreen();
+}
 </script>
 </body>
 </html>
